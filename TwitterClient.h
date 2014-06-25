@@ -23,9 +23,11 @@
 - (void) removeAccessToken;
 
 
-- (AFHTTPRequestOperation *) retweet:(NSString *)retweet success: (void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+- (AFHTTPRequestOperation *) retweet:(NSString *)tweetid success: (void (^)(AFHTTPRequestOperation *operation, id responseObject))success
                                 failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure ;
-
-- (void)toggleFavoriteForTweet:(Tweet *)tweet success:(void (^)(Tweet *))success failure:(void (^)(NSError *))failure;
+- (AFHTTPRequestOperation *) favoriteOn:(NSString *)tweetid success: (void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure ;
+- (AFHTTPRequestOperation *) favoriteOff:(NSString *)tweetid success: (void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                             failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure ;
 
 @end

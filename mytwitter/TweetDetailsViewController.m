@@ -8,6 +8,7 @@
 
 #import "TweetDetailsViewController.h"
 #import <UIImageView+AFNetworking.h>
+#import "TwitterClient.h"
 
 @interface TweetDetailsViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *userNameLbl;
@@ -18,9 +19,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *retweetCountLbl;
 @property (weak, nonatomic) IBOutlet UILabel *favCountLbl;
 
-@property (weak, nonatomic) IBOutlet UIImageView *replyBtn;
-@property (weak, nonatomic) IBOutlet UIImageView *retweetBtn;
-@property (weak, nonatomic) IBOutlet UIImageView *favBtn;
+@property (weak, nonatomic) IBOutlet UIButton *retwtBtn;
+@property (weak, nonatomic) IBOutlet UIButton *favBtn;
 
 @end
 
@@ -48,7 +48,34 @@
     self.tweetLbl.text = self.selectedTweet.tweetText;
     self.navigationItem.title = @"Tweet";
     
+    if (self.selectedTweet.retweeted) {
+        [self.retwtBtn setImage:[UIImage imageNamed:@"retweet_on"] forState:UIControlStateNormal];
+    }
+    if (self.selectedTweet.favourited) {
+        [self.favBtn setImage:[UIImage imageNamed:@"favorite_on"] forState:UIControlStateNormal];
+    }
 
+}
+- (IBAction)favAction:(id)sender {
+    TwitterClient *client = [TwitterClient instance];
+    [client favoriteOn:self.selectedTweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.favBtn setImage:[UIImage imageNamed:@"favorite_on"] forState:UIControlStateNormal];
+        self.selectedTweet.favourited = !self.selectedTweet.favourited;
+        NSLog(@"favoriteOn Success");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"favoriteOn Failure");
+    }];
+}
+
+- (IBAction)retweetAction:(id)sender {
+    TwitterClient *client = [TwitterClient instance];
+    [client retweet:self.selectedTweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [self.retwtBtn setImage:[UIImage imageNamed:@"retweet_on"] forState:UIControlStateNormal];
+        self.selectedTweet.retweeted = !self.selectedTweet.retweeted;
+        NSLog(@"ReTweet Success");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"ReTweet Failure");
+    }];
 }
 
 - (void)didReceiveMemoryWarning
