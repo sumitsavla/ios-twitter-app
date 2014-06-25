@@ -14,8 +14,15 @@ Required:
  * [x] Required: User can compose a new tweet by tapping on a compose button.
  * [x] Required: User can tap on a tweet to view it, with controls to retweet, favorite, and reply.
 
+Reference links:
+1. [Delete all keys from a NSUserDefaults](http://stackoverflow.com/questions/6797096/delete-all-keys-from-a-nsuserdefaults-dictionary-iphone)
+2. [NSCoding tutorial](http://www.raywenderlich.com/1914/nscoding-tutorial-for-ios-how-to-save-your-app-data)
 Walkthrough of all the user stories:
+3. [Oath1](https://github.com/bdbergeron/BDBOAuth1Manager)
+4. http://stackoverflow.com/questions/1345561/how-to-create-a-multiline-uitextfield
+5. http://stackoverflow.com/questions/8883730/set-focus-to-uitextfield-in-tablecell
 
 ![Video Walkthrough](https://raw.githubusercontent.com/sumitsavla/ios-twitter-app/master/twitter2.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
