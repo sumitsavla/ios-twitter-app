@@ -9,6 +9,7 @@
 #import "ComposeTweetViewController.h"
 #import <UIImageView+AFNetworking.h>
 #import "TwitterClient.h"
+#import "User.h"
 
 @interface ComposeTweetViewController ()
 {
@@ -35,15 +36,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.userImg setImageWithURL:self.user.profileImageUrl];
+    User *user = User.currentUser;
+    
+    [self.userImg setImageWithURL:user.profileImageUrl];
     
     self.userImg.layer.borderColor = [UIColor darkGrayColor].CGColor;
     self.userImg.layer.borderWidth = 1.5;
     self.userImg.layer.cornerRadius = 7.0;
-    self.userNameLbl.text = self.user.name;
-    self.userScreenLbl.text = self.user.screenName;
+    self.userNameLbl.text = user.name;
+    self.userScreenLbl.text = user.screenName;
     [self.textViewLbl becomeFirstResponder];
-
+    
+    tweetButton = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton:)];
+    self.navigationItem.rightBarButtonItem = tweetButton;
+    
 }
 
 - (IBAction)onTweetButton:(id)sender {
