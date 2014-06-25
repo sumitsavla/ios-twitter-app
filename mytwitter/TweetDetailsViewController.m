@@ -48,6 +48,8 @@
     self.userNameLbl.text = self.selectedTweet.name;
     self.userHandleLbl.text = self.selectedTweet.screenName;
     self.tweetLbl.text = self.selectedTweet.tweetText;
+    self.retweetCountLbl.text = self.selectedTweet.retweetCount;
+    self.favCountLbl.text = self.selectedTweet.favCount;
     self.navigationItem.title = @"Tweet";
     
     if (self.selectedTweet.retweeted) {
@@ -60,18 +62,29 @@
 }
 - (IBAction)favAction:(id)sender {
     TwitterClient *client = [TwitterClient instance];
-    [client favoriteOn:self.selectedTweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self.favBtn setImage:[UIImage imageNamed:@"favorite_on"] forState:UIControlStateNormal];
-        self.selectedTweet.favourited = !self.selectedTweet.favourited;
-        NSLog(@"favoriteOn Success");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"favoriteOn Failure");
-    }];
+    if(!self.selectedTweet.favourited){
+        [client favoriteOn:self.selectedTweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self.favBtn setImage:[UIImage imageNamed:@"favorite_on"] forState:UIControlStateNormal];
+            self.selectedTweet.favourited = !self.selectedTweet.favourited;
+            NSLog(@"favoriteOn Success");
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"favoriteOn Failure");
+        }];
+    } else {
+        [client favoriteOff:self.selectedTweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                [self.favBtn setImage:[UIImage imageNamed:@"favorite"] forState:UIControlStateNormal];
+                self.selectedTweet.favourited = !self.selectedTweet.favourited;
+                NSLog(@"favoriteOn Success");
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"favoriteOn Failure");
+        }];
+    }
 }
 - (IBAction)replyAction:(id)sender {
     ComposeTweetViewController *ctvc = [[ComposeTweetViewController alloc] init];
     ctvc.replyTo = self.selectedTweet.screenName;
     [self.navigationController pushViewController:ctvc animated:YES];
+
 }
 
 - (IBAction)retweetAction:(id)sender {
@@ -81,6 +94,14 @@
         self.selectedTweet.retweeted = !self.selectedTweet.retweeted;
         NSLog(@"ReTweet Success");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if(self.selectedTweet.retweeted){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                            message:@"Already Retweeted"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }
         NSLog(@"ReTweet Failure");
     }];
 }

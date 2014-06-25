@@ -20,7 +20,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *timeLbl;
 @property (weak, nonatomic) IBOutlet UIButton *retweetBtn;
 @property (weak, nonatomic) IBOutlet UIButton *favBtn;
-
+@property (strong, nonatomic) TwitterClient *client;
 @property (strong, nonatomic) NSCalendar* calendar;
 
 @end
@@ -79,19 +79,38 @@
         self.tweet.retweeted = !self.tweet.retweeted;
         NSLog(@"ReTweet Success");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if(self.tweet.retweeted){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"Already Retweeted"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+            [alert show];
+        }
         NSLog(@"ReTweet Failure");
     }];
 }
 
 - (void) favButtonClicked: (id)sender {
-    TwitterClient *client = [TwitterClient instance];
-    [client favoriteOn:self.tweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [self.favBtn setImage:[UIImage imageNamed:@"favorite_on"] forState:UIControlStateNormal];
-        self.tweet.favourited = !self.tweet.favourited;
-        NSLog(@"favoriteOn Success");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"favoriteOn Failure");
-    }];
+    if(!self.tweet.favourited){
+        TwitterClient *client = [TwitterClient instance];
+        [client favoriteOn:self.tweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self.favBtn setImage:[UIImage imageNamed:@"favorite_on"] forState:UIControlStateNormal];
+            self.tweet.favourited = !self.tweet.favourited;
+            NSLog(@"favoriteOn Success");
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"favoriteOn Failure");
+        }];
+    } else {
+        TwitterClient *client = [TwitterClient instance];
+        [client favoriteOff:self.tweet.tweetid success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [self.favBtn setImage:[UIImage imageNamed:@"favorite"] forState:UIControlStateNormal];
+            self.tweet.favourited = !self.tweet.favourited;
+            NSLog(@"favoriteOff Success");
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"favoriteOff Failure");
+        }];
+    }
 }
 
 

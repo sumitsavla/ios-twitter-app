@@ -18,6 +18,8 @@
 @property (nonatomic) BOOL retweeted;
 @property (nonatomic, strong) NSString *tweetText;
 @property (nonatomic, strong) NSDate *createdAt;
+@property (nonatomic, strong) NSString *retweetCount;
+@property (nonatomic, strong) NSString *favCount;
 
 - (id)initWithDictionary:(NSDictionary *)dictionary;
 + (NSArray *)tweetsWithArray:(NSArray *)array;

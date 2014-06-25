@@ -20,7 +20,8 @@
         self.favourited = [tweet[@"favorited"] boolValue];
         self.retweeted = [tweet[@"retweeted"] boolValue];
         self.tweetid = tweet[@"id_str"];
-        
+        self.retweetCount = [NSString stringWithFormat:@"%@", tweet[@"retweet_count"]];
+        self.favCount = [NSString stringWithFormat:@"%@", tweet[@"favorite_count"]];
         NSDateFormatter *df = [[NSDateFormatter alloc] init];
         [df setDateFormat:@"E MMM dd HH:mm:ss Z yyyy"];
         NSDate *date = [df dateFromString: tweet[@"created_at"]];
