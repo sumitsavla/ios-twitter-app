@@ -60,7 +60,9 @@
     refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Loading Latest Tweets..."];
     [refreshControl addTarget:self action:@selector(refreshTweets) forControlEvents:UIControlEventValueChanged];
     [self.tweetsTableView addSubview:refreshControl];
-    
+}
+
+- (void) viewDidAppear:(BOOL)animated{
     [self loadTweets];
 }
 

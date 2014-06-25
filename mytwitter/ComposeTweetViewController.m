@@ -45,8 +45,11 @@
     self.userImg.layer.cornerRadius = 7.0;
     self.userNameLbl.text = user.name;
     self.userScreenLbl.text = user.screenName;
+    if(self.replyTo){
+        self.textViewLbl.text = self.replyTo;
+    }
     [self.textViewLbl becomeFirstResponder];
-    
+
     tweetButton = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButton:)];
     self.navigationItem.rightBarButtonItem = tweetButton;
     

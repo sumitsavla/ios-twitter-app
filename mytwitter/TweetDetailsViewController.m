@@ -9,6 +9,7 @@
 #import "TweetDetailsViewController.h"
 #import <UIImageView+AFNetworking.h>
 #import "TwitterClient.h"
+#import "ComposeTweetViewController.h"
 
 @interface TweetDetailsViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *userNameLbl;
@@ -21,6 +22,7 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *retwtBtn;
 @property (weak, nonatomic) IBOutlet UIButton *favBtn;
+@property (weak, nonatomic) IBOutlet UIButton *replyBtn;
 
 @end
 
@@ -65,6 +67,11 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"favoriteOn Failure");
     }];
+}
+- (IBAction)replyAction:(id)sender {
+    ComposeTweetViewController *ctvc = [[ComposeTweetViewController alloc] init];
+    ctvc.replyTo = self.selectedTweet.screenName;
+    [self.navigationController pushViewController:ctvc animated:YES];
 }
 
 - (IBAction)retweetAction:(id)sender {
