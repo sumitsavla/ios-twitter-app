@@ -16,6 +16,6 @@ Required:
 
 Walkthrough of all the user stories:
 
-![Video Walkthrough](https://raw.githubusercontent.com/sumitsavla/ios-twitter-app/master/twitter.gif)
+![Video Walkthrough](https://raw.githubusercontent.com/sumitsavla/ios-twitter-app/master/twitter2.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
