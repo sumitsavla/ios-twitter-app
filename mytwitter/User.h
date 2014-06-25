@@ -16,5 +16,7 @@
 
 + (User *) currentUser;
 + (void) setCurrentUser:(User *) user;
++ (void) removeCurrentUser;
+- (id)initWithDictionary:(NSDictionary *)dictionary;
 
 @end

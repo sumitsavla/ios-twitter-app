@@ -19,6 +19,7 @@
         self.tweetText = tweet[@"text"];
         self.favourited = [tweet[@"favorited"] boolValue];
         self.retweeted = [tweet[@"retweeted"] boolValue];
+        self.tweetid = tweet[@"id_str"];
         
         NSDateFormatter *df = [[NSDateFormatter alloc] init];
         [df setDateFormat:@"E MMM dd HH:mm:ss Z yyyy"];

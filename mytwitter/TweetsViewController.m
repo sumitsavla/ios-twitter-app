@@ -11,6 +11,7 @@
 #import "TweetDetailsViewController.h"
 #import "ComposeTweetViewController.h"
 #import "TwitterClient.h"
+#import "loginViewController.h"
 #import "User.h"
 
 @interface TweetsViewController ()
@@ -35,12 +36,14 @@
     if (self) {
         // Custom initialization
     }
+
     return self;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     self.tweetsTableView.dataSource = self;
     self.tweetsTableView.delegate = self;
     [self.tweetsTableView registerNib:[UINib nibWithNibName:@"TweetViewCell" bundle:nil] forCellReuseIdentifier:@"TweetCell"];
@@ -57,22 +60,8 @@
     refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Loading Latest Tweets..."];
     [refreshControl addTarget:self action:@selector(refreshTweets) forControlEvents:UIControlEventValueChanged];
     [self.tweetsTableView addSubview:refreshControl];
-
-}
-
-- (void) viewDidAppear:(BOOL)animated {
-    [self loadTweets];
     
-    TwitterClient *client = [TwitterClient instance];
-    [client userInfoWithSuccess:^(AFHTTPRequestOperation *operation, id response){
-    //    NSLog(@"userInfoWithSuccess response %@", response);
-        self.user = [[User alloc]init];
-        self.user.name = response[@"name"];
-        self.user.screenName = response[@"screen_name"];
-        self.user.profileImageUrl = [NSURL URLWithString:response[@"profile_image_url"]];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
-        NSLog(@"userInfoWithSuccess response err");
-    }];
+    [self loadTweets];
 }
 
 - (void) loadTweets {
@@ -87,14 +76,17 @@
     }];
 }
 
+
+
 - (void)refreshTweets {
     [refreshControl endRefreshing];
     [self loadTweets];
 }
 
 - (IBAction)onLeftButton:(id)sender {
-    
-    
+    [User removeCurrentUser];
+    loginViewController *lvc = [[loginViewController alloc] init];
+    [self.navigationController pushViewController:lvc animated:YES];
 }
 
 - (IBAction)onPostButton:(id)sender {

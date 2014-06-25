@@ -10,6 +10,7 @@
 #import "loginViewController.h"
 #import "TwitterClient.h"
 #import "TweetsViewController.h"
+#import "User.h"
 
 @implementation NSURL (dictionaryFromQueryString)
 
@@ -44,14 +45,42 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Create the navigation controller
-    self.navigationController = [[UINavigationController alloc] initWithRootViewController:[[loginViewController alloc]init]];
+//        NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
+//        NSDictionary * dict = [defs dictionaryRepresentation];
+//        for (id key in dict) {
+//            [defs removeObjectForKey:key];
+//        }
+//        [defs synchronize];
+    
+    if(User.currentUser == nil){
+        self.navigationController = [[UINavigationController alloc] initWithRootViewController:[[loginViewController alloc]init]];
+    } else {
+        self.navigationController = [[UINavigationController alloc] initWithRootViewController:[[TweetsViewController alloc]init]];
+    }
+    
     [[UINavigationBar appearance] setBarTintColor:[UIColor lightGrayColor]];
     self.window.rootViewController = self.navigationController;
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (void) getCurrentUser {
+    TwitterClient *client = [TwitterClient instance];
+    
+    [client userInfoWithSuccess:^(AFHTTPRequestOperation *operation, id response){
+        //    NSLog(@"userInfoWithSuccess response %@", response);
+        User *user = [[User alloc]init];
+        user = [[User alloc]init];
+        user.name = response[@"name"];
+        user.screenName = response[@"screen_name"];
+        user.profileImageUrl = [NSURL URLWithString:response[@"profile_image_url"]];
+        [User setCurrentUser:user];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        NSLog(@"userInfoWithSuccess response err");
+    }];
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -68,6 +97,7 @@
                 TwitterClient *client = [TwitterClient instance];
                 [client fetchAccessTokenWithPath:@"oauth/access_token" method:@"POST" requestToken:[BDBOAuthToken tokenWithQueryString:url.query] success:^(BDBOAuthToken *accessToken) {
                     NSLog(@"access token");
+                    [self getCurrentUser];
                     [client.requestSerializer saveAccessToken:accessToken];
                     TweetsViewController *tvc = [[TweetsViewController alloc] init];
                     [self.navigationController pushViewController:tvc animated:YES];

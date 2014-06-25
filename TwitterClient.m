@@ -7,6 +7,7 @@
 //
 
 #import "TwitterClient.h"
+#import "Tweet.h"
 
 @implementation TwitterClient
 
@@ -47,6 +48,46 @@
     NSDictionary *parameters = @{@"status": status};
 
     return [self POST:@"1.1/statuses/update.json" parameters:parameters success:success failure:failure];
+}
+
+- (AFHTTPRequestOperation *) retweet:(NSString *)tweetid success: (void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    return [self POST:[NSString stringWithFormat:@"1.1/statuses/retweet/%@.json", tweetid] parameters:nil success:success failure:failure];
+}
+
+- (void) removeAccessToken {
+    [self.requestSerializer removeAccessToken];
+}
+
+- (void)toggleFavoriteForTweet:(Tweet *)tweet success:(void (^)(Tweet *))success failure:(void (^)(NSError *))failure
+{
+    NSString* resource;
+    if (!tweet.favourited) {
+        resource = @"1.1/favorites/destroy.json";
+        
+    } else {
+        resource = @"1.1/favorites/create.json";
+        
+    }
+    
+    NSNumberFormatter * tId = [[NSNumberFormatter alloc] init];
+    [tId setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber * tweetIDnum = [tId numberFromString:tweet.tweetid];
+    NSDictionary *params = @{@"id":tweetIDnum };
+    
+    
+    
+    [self POST:resource parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            
+            if (success) success(tweet);
+        }
+        else {
+            if (failure) failure([NSError errorWithDomain:@"Post Tweet" code:400 userInfo:nil]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (failure) failure(error);
+    }];
 }
 
 @end

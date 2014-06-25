@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *tweetTimeLbl;
 @property (weak, nonatomic) IBOutlet UILabel *retweetCountLbl;
 @property (weak, nonatomic) IBOutlet UILabel *favCountLbl;
+
 @property (weak, nonatomic) IBOutlet UIImageView *replyBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *retweetBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *favBtn;

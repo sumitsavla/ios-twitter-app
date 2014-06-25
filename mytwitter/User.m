@@ -7,22 +7,66 @@
 //
 
 #import "User.h"
+#import "TwitterClient.h"
 
 @implementation User
 
-static User *currentUser = nil;
+static User* _currentUser = nil;
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeObject:self.screenName forKey:@"screenName"];
+    [encoder encodeObject:self.profileImageUrl forKey:@"profileImageURL"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super init];
+    if (self) {
+        self.name = [decoder decodeObjectForKey:@"name"];
+        self.screenName = [decoder decodeObjectForKey:@"screenName"];
+        self.profileImageUrl = [decoder decodeObjectForKey:@"profileImageURL"];
+    }
+    return self;
+}
 
 + (User *) currentUser {
-    if (currentUser == nil) {
-        NSDictionary *dictionary = [[NSUserDefaults standardUserDefaults] objectForKey:@"current_user"];
-        if (dictionary) {
-//            currentUser = [[User alloc] initWithDictionary:dictionary];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if(!_currentUser){
+        NSData *data = [defaults dataForKey:@"current_user"];
+        if (data) {
+            User *currentUser = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+            _currentUser = currentUser;
         }
     }
-    return currentUser;
+    return _currentUser;
 }
 
+
 + (void) setCurrentUser:(User *) user {
-    currentUser = user;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if(!_currentUser){
+        _currentUser = user;
+        NSData* data = [NSKeyedArchiver archivedDataWithRootObject:user];
+        [defaults setObject:data forKey:@"current_user"];
+        [defaults synchronize];
+    } else{ 
+        [self removeCurrentUser];
+    }
+    
+    [defaults synchronize];
 }
+
++ (void)removeCurrentUser{
+    _currentUser = nil;
+    [[TwitterClient instance]removeAccessToken];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:@"current_user"];
+    [defaults synchronize];
+}
+
 @end
+
+

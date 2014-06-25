@@ -11,6 +11,7 @@
 @interface Tweet : NSObject
 
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *tweetid;
 @property (nonatomic, strong) NSString *screenName;
 @property (nonatomic, strong) NSURL *profileImageUrl;
 @property (nonatomic) BOOL favourited;
