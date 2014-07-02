@@ -14,6 +14,10 @@
 @property (nonatomic, strong) NSString *tweetid;
 @property (nonatomic, strong) NSString *screenName;
 @property (nonatomic, strong) NSURL *profileImageUrl;
+@property (nonatomic, strong) NSURL *profileBGImageUrl;
+@property (nonatomic, strong) NSString *followersCount;
+@property (nonatomic, strong) NSString *friendsCount;
+@property (nonatomic, strong) NSString *tweetsCount;
 @property (nonatomic) BOOL favourited;
 @property (nonatomic) BOOL retweeted;
 @property (nonatomic, strong) NSString *tweetText;

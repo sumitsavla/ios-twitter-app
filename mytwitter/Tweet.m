@@ -16,6 +16,10 @@
         self.name = tweet[@"user"][@"name"];
         self.screenName =  [NSString stringWithFormat:@"@%@", tweet[@"user"][@"screen_name"]];
         self.profileImageUrl = [NSURL URLWithString:tweet[@"user"][@"profile_image_url"]];
+        self.profileBGImageUrl = [NSURL URLWithString:tweet[@"user"][@"profile_banner_url"]];
+        self.followersCount = [NSString stringWithFormat:@"%@", tweet[@"user"][@"followers_count"]];
+        self.friendsCount = [NSString stringWithFormat:@"%@", tweet[@"user"][@"friends_count"]];
+        self.tweetsCount =  [NSString stringWithFormat:@"%@", tweet[@"user"][@"statuses_count"]];
         self.tweetText = tweet[@"text"];
         self.favourited = [tweet[@"favorited"] boolValue];
         self.retweeted = [tweet[@"retweeted"] boolValue];

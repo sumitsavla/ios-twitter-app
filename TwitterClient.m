@@ -39,6 +39,19 @@
     return [self GET:@"1.1/statuses/home_timeline.json" parameters:parameters success:success failure:failure];
 }
 
+- (AFHTTPRequestOperation *) mentionsTimelineWithSuccess: (void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    NSDictionary *parameters = @{@"count": @"20"};
+    
+    return [self GET:@"1.1/statuses/mentions_timeline.json" parameters:parameters success:success failure:failure];
+}
+
+- (AFHTTPRequestOperation *) userTimelineWithSuccess:(NSString *)screenName success: (void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
+    
+    NSDictionary *parameters = @{@"screen_name": screenName};
+    
+    return [self GET:@"1.1/statuses/user_timeline.json" parameters:parameters success:success failure:failure];
+}
+
 - (AFHTTPRequestOperation *) userInfoWithSuccess: (void (^)(AFHTTPRequestOperation *operation, id response))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     return [self GET:@"1.1/account/verify_credentials.json" parameters:nil success:success failure:failure];
 }

@@ -13,6 +13,7 @@
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *screenName;
 @property (nonatomic, strong) NSURL *profileImageUrl;
+@property (nonatomic, strong) NSURL *profileBGImageUrl;
 
 + (User *) currentUser;
 + (void) setCurrentUser:(User *) user;

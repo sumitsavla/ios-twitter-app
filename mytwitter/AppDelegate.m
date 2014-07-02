@@ -8,9 +8,10 @@
 
 #import "AppDelegate.h"
 #import "loginViewController.h"
+#import "HamburgerViewController.h"
 #import "TwitterClient.h"
-#import "TweetsViewController.h"
 #import "User.h"
+#import "TweetsViewController.h"
 
 @implementation NSURL (dictionaryFromQueryString)
 
@@ -37,6 +38,7 @@
 @interface AppDelegate()
 
 @property (nonatomic) UINavigationController *navigationController;
+@property UIBarButtonItem *leftButton;
 
 @end
 
@@ -45,23 +47,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-//        NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
-//        NSDictionary * dict = [defs dictionaryRepresentation];
-//        for (id key in dict) {
-//            [defs removeObjectForKey:key];
-//        }
-//        [defs synchronize];
     
     if(User.currentUser == nil){
         self.navigationController = [[UINavigationController alloc] initWithRootViewController:[[loginViewController alloc]init]];
+        self.window.rootViewController = self.navigationController;
+
     } else {
-        self.navigationController = [[UINavigationController alloc] initWithRootViewController:[[TweetsViewController alloc]init]];
+        self.window.rootViewController = [[HamburgerViewController alloc]init];
     }
     
-    [[UINavigationBar appearance] setBarTintColor:[UIColor lightGrayColor]];
-    self.window.rootViewController = self.navigationController;
-    
-    self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -70,12 +64,12 @@
     TwitterClient *client = [TwitterClient instance];
     
     [client userInfoWithSuccess:^(AFHTTPRequestOperation *operation, id response){
-        //    NSLog(@"userInfoWithSuccess response %@", response);
         User *user = [[User alloc]init];
         user = [[User alloc]init];
         user.name = response[@"name"];
         user.screenName = response[@"screen_name"];
         user.profileImageUrl = [NSURL URLWithString:response[@"profile_image_url"]];
+        user.profileBGImageUrl = [NSURL URLWithString:response[@"profile_banner_url"]];
         [User setCurrentUser:user];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){

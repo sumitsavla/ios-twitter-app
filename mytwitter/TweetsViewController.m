@@ -12,18 +12,18 @@
 #import "ComposeTweetViewController.h"
 #import "TwitterClient.h"
 #import "loginViewController.h"
+#import "ProfileViewController.h"
 #import "User.h"
 
 @interface TweetsViewController ()
 {
     UIRefreshControl *refreshControl;
-    UIBarButtonItem *leftButton;
+    UIBarButtonItem *menuButton;
     UIBarButtonItem *postButton;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tweetsTableView;
 @property (strong, nonatomic) NSArray *tweets;
-@property (strong, nonatomic) User *user;
 @property (nonatomic, strong) TweetViewCell *prototypeCell;
 
 @end
@@ -49,8 +49,8 @@
     [self.tweetsTableView registerNib:[UINib nibWithNibName:@"TweetViewCell" bundle:nil] forCellReuseIdentifier:@"TweetCell"];
     self.prototypeCell = [self.tweetsTableView dequeueReusableCellWithIdentifier:@"TweetCell"];
     
-    leftButton = [[UIBarButtonItem alloc] initWithTitle:@"Sign Out" style:UIBarButtonItemStylePlain target:self action:@selector(onLeftButton:)];
-    self.navigationItem.leftBarButtonItem = leftButton;
+    menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(onMenuButton:)];
+    self.navigationItem.leftBarButtonItem = menuButton;
     
     postButton = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStylePlain target:self action:@selector(onPostButton:)];
     self.navigationItem.rightBarButtonItem = postButton;
@@ -60,32 +60,46 @@
     refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Loading Latest Tweets..."];
     [refreshControl addTarget:self action:@selector(refreshTweets) forControlEvents:UIControlEventValueChanged];
     [self.tweetsTableView addSubview:refreshControl];
-}
-
-- (void) viewDidAppear:(BOOL)animated{
+    
     [self loadTweets];
+
 }
 
 - (void) loadTweets {
     TwitterClient *client = [TwitterClient instance];
-    [client homeTimelineWithSuccess:^(AFHTTPRequestOperation *operation, id response){
-            NSLog(@"homeTimelineWithSuccess response %@", response);
-        NSLog(@"NO. of tweets ... %i",self.tweets.count);
-        self.tweets = [Tweet tweetsWithArray:response];
-        [self.tweetsTableView reloadData];
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
-        NSLog(@"homeTimelineWithSuccess response err");
-    }];
+    if (self.initType == HOME) {
+        [client homeTimelineWithSuccess:^(AFHTTPRequestOperation *operation, id response){
+         //   NSLog(@"homeTimelineWithSuccess response %@", response);
+            NSLog(@"NO. of tweets ... %i",self.tweets.count);
+            self.tweets = [Tweet tweetsWithArray:response];
+            [self.tweetsTableView reloadData];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+            NSLog(@"homeTimelineWithSuccess response err %@", error);
+        }];
+    } else if (self.initType == MENTIONS) {
+        [client mentionsTimelineWithSuccess:^(AFHTTPRequestOperation *operation, id response){
+         //   NSLog(@"mentionsTimelineWithSuccess response %@", response);
+            NSLog(@"NO. of tweets ... %i",self.tweets.count);
+            self.tweets = [Tweet tweetsWithArray:response];
+            [self.tweetsTableView reloadData];
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+            NSLog(@"mentionsTimelineWithSuccess response err");
+        }];
+
+    }
 }
-
-
 
 - (void)refreshTweets {
     [refreshControl endRefreshing];
     [self loadTweets];
 }
 
-- (IBAction)onLeftButton:(id)sender {
+- (IBAction)onMenuButton:(id)sender {
+    NSLog(@"on Menu");
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"clickMenu" object:nil];
+}
+
+- (void) signoutUser {
     [User removeCurrentUser];
     loginViewController *lvc = [[loginViewController alloc] init];
     [self.navigationController pushViewController:lvc animated:YES];
@@ -93,7 +107,7 @@
 
 - (IBAction)onPostButton:(id)sender {
     ComposeTweetViewController *ctvc = [[ComposeTweetViewController alloc] init];
-    ctvc.user = self.user;
+    ctvc.user = [User currentUser];
     [self.navigationController pushViewController:ctvc animated:YES];
 }
 
@@ -112,9 +126,29 @@
     
 }
 
+-(IBAction)onProfileImgTap:(UITapGestureRecognizer *)tap{
+    Tweet *tweetUser = self.tweets[tap.view.tag];
+    ProfileViewController *pvc = [[ProfileViewController alloc] init];
+    NSLog(@"tweetUser %@", tweetUser.name);
+    NSLog(@"tweetUser %@", tweetUser.screenName);
+    User *user = [[User alloc]init];
+    user.name = tweetUser.name;
+    user.screenName = tweetUser.screenName;
+    user.profileBGImageUrl = tweetUser.profileBGImageUrl;
+    user.profileImageUrl = tweetUser.profileImageUrl;
+    pvc.user = user;
+    [self.navigationController pushViewController:pvc animated:YES];
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     TweetViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetCell" forIndexPath:indexPath];
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onProfileImgTap:)];
+    tapGestureRecognizer.numberOfTapsRequired = 1;
+    cell.profileImage.tag = indexPath.row;
+    [cell.profileImage addGestureRecognizer:tapGestureRecognizer];
+    
     cell.tweet = self.tweets[indexPath.row];
     return cell;
 }

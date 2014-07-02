@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+enum TimelineType {
+    HOME,
+    MENTIONS
+};
+typedef enum TimelineType initType;
+
 @interface TweetsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+
+@property (nonatomic, assign) enum TimelineType initType;
 
 @end

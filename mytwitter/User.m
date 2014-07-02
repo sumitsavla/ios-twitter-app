@@ -18,6 +18,7 @@ static User* _currentUser = nil;
     [encoder encodeObject:self.name forKey:@"name"];
     [encoder encodeObject:self.screenName forKey:@"screenName"];
     [encoder encodeObject:self.profileImageUrl forKey:@"profileImageURL"];
+    [encoder encodeObject:self.profileBGImageUrl forKey:@"profileBGImageUrl"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -27,6 +28,7 @@ static User* _currentUser = nil;
         self.name = [decoder decodeObjectForKey:@"name"];
         self.screenName = [decoder decodeObjectForKey:@"screenName"];
         self.profileImageUrl = [decoder decodeObjectForKey:@"profileImageURL"];
+        self.profileBGImageUrl = [decoder decodeObjectForKey:@"profileBGImageUrl"];
     }
     return self;
 }
