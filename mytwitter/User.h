@@ -14,6 +14,9 @@
 @property (nonatomic, strong) NSString *screenName;
 @property (nonatomic, strong) NSURL *profileImageUrl;
 @property (nonatomic, strong) NSURL *profileBGImageUrl;
+@property (nonatomic, strong) NSString *followersCount;
+@property (nonatomic, strong) NSString *friendsCount;
+@property (nonatomic, strong) NSString *tweetsCount;
 
 + (User *) currentUser;
 + (void) setCurrentUser:(User *) user;

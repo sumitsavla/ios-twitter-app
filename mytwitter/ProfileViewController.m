@@ -52,23 +52,23 @@
     self.profileImg.layer.cornerRadius = 25.0;
     // To enable corners to be "clipped"
     [self.profileImg setClipsToBounds:YES];
-    if(self.userInfo.profileBGImageUrl != nil){
-        [self.bgImg setImageWithURL:self.userInfo.profileBGImageUrl];
+    if(self.user.profileBGImageUrl != nil){
+        [self.bgImg setImageWithURL:self.user.profileBGImageUrl];
     } else {
         [self.nameLbl setTextColor: [UIColor blackColor]];
         [self.screenLbl setTextColor: [UIColor blackColor]];
     }
-    self.nameLbl.text = self.userInfo.name;
-    self.screenLbl.text = self.userInfo.screenName;
-    self.FollowersCountLbl.text = self.userInfo.followersCount;
-    self.tweetCountLbl.text = self.userInfo.tweetsCount;
-    self.followingCountLbl.text = self.userInfo.friendsCount;
+    self.nameLbl.text = self.user.name;
+    self.screenLbl.text = self.user.screenName;
+    self.FollowersCountLbl.text = self.user.followersCount;
+    self.tweetCountLbl.text = self.user.tweetsCount;
+    self.followingCountLbl.text = self.user.friendsCount;
     [self loadTweets];
 }
 
 - (void) loadTweets {
     TwitterClient *client = [TwitterClient instance];
-    [client userTimelineWithSuccess:self.userInfo.screenName success:^(AFHTTPRequestOperation *operation, id response){
+    [client userTimelineWithSuccess:self.user.screenName success:^(AFHTTPRequestOperation *operation, id response){
         //   NSLog(@"userTimelineWithSuccess response %@", response);
         NSLog(@"NO. of tweets ... %i",self.tweets.count);
         self.tweets = [Tweet tweetsWithArray:response];
