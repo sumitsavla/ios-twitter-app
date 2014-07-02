@@ -20,6 +20,9 @@
 @property (weak, nonatomic) IBOutlet UITableView *tweetsTableView;
 @property (strong, nonatomic) NSArray *tweets;
 @property (nonatomic, strong) TweetViewCell *prototypeCell;
+@property (weak, nonatomic) IBOutlet UILabel *tweetCountLbl;
+@property (weak, nonatomic) IBOutlet UILabel *followingCountLbl;
+@property (weak, nonatomic) IBOutlet UILabel *FollowersCountLbl;
 
 @end
 
@@ -49,21 +52,23 @@
     self.profileImg.layer.cornerRadius = 25.0;
     // To enable corners to be "clipped"
     [self.profileImg setClipsToBounds:YES];
-    if(self.user.profileBGImageUrl != nil){
-        [self.bgImg setImageWithURL:self.user.profileBGImageUrl];
+    if(self.userInfo.profileBGImageUrl != nil){
+        [self.bgImg setImageWithURL:self.userInfo.profileBGImageUrl];
     } else {
         [self.nameLbl setTextColor: [UIColor blackColor]];
         [self.screenLbl setTextColor: [UIColor blackColor]];
     }
-    self.nameLbl.text = self.user.name;
-    self.screenLbl.text = self.user.screenName;
-    
+    self.nameLbl.text = self.userInfo.name;
+    self.screenLbl.text = self.userInfo.screenName;
+    self.FollowersCountLbl.text = self.userInfo.followersCount;
+    self.tweetCountLbl.text = self.userInfo.tweetsCount;
+    self.followingCountLbl.text = self.userInfo.friendsCount;
     [self loadTweets];
 }
 
 - (void) loadTweets {
     TwitterClient *client = [TwitterClient instance];
-    [client userTimelineWithSuccess:self.user.screenName success:^(AFHTTPRequestOperation *operation, id response){
+    [client userTimelineWithSuccess:self.userInfo.screenName success:^(AFHTTPRequestOperation *operation, id response){
         //   NSLog(@"userTimelineWithSuccess response %@", response);
         NSLog(@"NO. of tweets ... %i",self.tweets.count);
         self.tweets = [Tweet tweetsWithArray:response];

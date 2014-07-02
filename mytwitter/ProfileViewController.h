@@ -12,6 +12,6 @@
 
 @interface ProfileViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
+@property (strong, nonatomic) Tweet *userInfo;
 @property (strong, nonatomic) User *user;
-
 @end

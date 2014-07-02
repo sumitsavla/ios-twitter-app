@@ -129,14 +129,7 @@
 -(IBAction)onProfileImgTap:(UITapGestureRecognizer *)tap{
     Tweet *tweetUser = self.tweets[tap.view.tag];
     ProfileViewController *pvc = [[ProfileViewController alloc] init];
-    NSLog(@"tweetUser %@", tweetUser.name);
-    NSLog(@"tweetUser %@", tweetUser.screenName);
-    User *user = [[User alloc]init];
-    user.name = tweetUser.name;
-    user.screenName = tweetUser.screenName;
-    user.profileBGImageUrl = tweetUser.profileBGImageUrl;
-    user.profileImageUrl = tweetUser.profileImageUrl;
-    pvc.user = user;
+    pvc.userInfo = tweetUser;
     [self.navigationController pushViewController:pvc animated:YES];
 }
 

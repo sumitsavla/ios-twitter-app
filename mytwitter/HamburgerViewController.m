@@ -11,6 +11,8 @@
 #import "ProfileViewController.h"
 #import "User.h"
 
+#define CORNER_RADIUS 4
+#define MENU_POSITION 130
 @interface HamburgerViewController ()
 @property (weak, nonatomic) IBOutlet UITableView *menuTableView;
 @property (nonatomic, strong) NSMutableArray *options;
@@ -27,7 +29,7 @@
 
 @implementation HamburgerViewController
 
-static float openMenuPosition = 250;
+//static float
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -40,7 +42,6 @@ static float openMenuPosition = 250;
         self.mentionsViewController = [[TweetsViewController alloc] init];
         self.mentionsViewController.initType = MENTIONS;
         self.profileViewController  = [[ProfileViewController alloc] init];
-    //    [self.profileViewController setUser:[User currentUser]];
         
         self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.homeViewController];
     }
@@ -68,29 +69,45 @@ static float openMenuPosition = 250;
     CGPoint velocity = [panGestureRecognizer velocityInView:self.view];
     
     if (panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        NSLog(@"Gesture began at: %@", NSStringFromCGPoint(point));
         self.origin = CGPointMake(point.x - self.contentView.frame.origin.x, point.y - self.contentView.frame.origin.y);
     } else if (panGestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        float xPos = (point.x - self.origin.x);
-        if (xPos < 0) {
-            xPos = 0;
+        NSLog(@"Gesture changed: %@", NSStringFromCGPoint(point));
+        float xPosition = (point.x - self.origin.x);
+        if (xPosition > MENU_POSITION) {
+            xPosition = MENU_POSITION;
+        } else if (xPosition < 0) {
+            xPosition = 0;
         }
-        if (xPos > openMenuPosition) {
-            xPos = openMenuPosition;
-        }
-        self.contentView.frame = CGRectMake( xPos, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
+        [self showCenterViewWithShadow:YES withOffset:-2];
+        self.contentView.frame = CGRectMake( xPosition, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
     } else if (panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        float destinationXPos = (velocity.x > 0) ? openMenuPosition : 0;
+        NSLog(@"Gesture ended: %@", NSStringFromCGPoint(point));
+        float destinationXPosition = (velocity.x > 0) ? MENU_POSITION : 0;
         [UIView animateWithDuration:0.25 animations:^{
-            self.contentView.frame = CGRectMake( destinationXPos, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
+            self.contentView.frame = CGRectMake( destinationXPosition, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
         }];
-        [self configEvents];
+        [self configTapEvents];
     }
 }
 
-- (void)configEvents{
+- (void)configTapEvents{
     BOOL isMenuOpen = self.contentView.frame.origin.x == 0;
     [self.contentView.subviews[0] setUserInteractionEnabled:isMenuOpen];
     self.tapGestureRecognizer.enabled = !isMenuOpen;
+}
+
+-(void)showCenterViewWithShadow:(BOOL)value withOffset:(double)offset {
+	if (value) {
+		[self.contentView.layer setCornerRadius:CORNER_RADIUS];
+		[self.contentView.layer setShadowColor:[UIColor blackColor].CGColor];
+		[self.contentView.layer setShadowOpacity:0.8];
+		[self.contentView.layer setShadowOffset:CGSizeMake(offset, offset)];
+        
+	} else {
+		[self.contentView.layer setCornerRadius:0.0f];
+		[self.contentView.layer setShadowOffset:CGSizeMake(offset, offset)];
+	}
 }
 
 - (void)didReceiveMemoryWarning
@@ -129,11 +146,11 @@ static float openMenuPosition = 250;
         [self.contentView addGestureRecognizer:self.tapGestureRecognizer];
     }
     
-    float xPos = (self.contentView.frame.origin.x == 0) ? openMenuPosition : 0;
+    float xPosition = (self.contentView.frame.origin.x == 0) ? MENU_POSITION : 0;
     [UIView animateWithDuration:0.4 animations:^{
-        self.contentView.frame = CGRectMake( xPos, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
+        self.contentView.frame = CGRectMake( xPosition, 0, self.contentView.frame.size.width, self.contentView.frame.size.height);
     }];
-    [self configEvents];
+   [self configTapEvents];
 }
 
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
